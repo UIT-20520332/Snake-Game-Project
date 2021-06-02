@@ -20,6 +20,8 @@ public:
         A[2].x = 12; A[2].y = 10;
     }
     void Ve(){
+        
+        cout<<"ok";
         for (int i = 0; i < DoDai; i++){
             gotoxy(A[i].x,A[i].y);
             cout<<"X";
