@@ -2,7 +2,6 @@
 #include <windows.h>
 #include <cstdlib>
 #include <conio.h>
-#include "graphics.h"
 #include <stdio.h>
 using namespace std;
 void gotoxy( int column, int line );
@@ -46,12 +45,12 @@ int main()
     char t;
 
     while (1){
-        if (kbhit()){
+        if (_kbhit()){
             t = _getch();
             if (t=='a') Huong = 2;
             if (t=='w') Huong = 3;
             if (t=='d') Huong = 0;
-            if (t=='x') Huong = 1;
+            if (t=='s') Huong = 1;
         }
         system("cls");
         r.Ve();
