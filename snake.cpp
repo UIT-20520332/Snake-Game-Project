@@ -23,11 +23,36 @@ class CONRAN {
 public:
     struct Point A[100];
     int DoDai;
+    struct FOOD
+	{
+		POINT F;
+		int kc;
+	};
+	FOOD FO[100];
+	int slm;
     CONRAN() {
         DoDai = 3;
         A[0].x = 10; A[0].y = 10;
         A[1].x = 11; A[1].y = 10;
         A[2].x = 12; A[2].y = 10;
+        slm = 50;
+		FO[0].F.x = 5;
+		FO[0].F.y = 5;
+        for (int i = 1; i <= slm; i++)
+		{
+			if ((i-1) % 5 == 0 && (i-1) != 0) FO[i-1].kc=2;
+			else FO[i-1].kc = 1;
+			if ((i) % 2 == 0)
+			{
+				FO[i].F.x = FO[i-1].F.x + 7;
+				FO[i].F.y = FO[i-1].F.y + 6;
+			}
+			else
+			{
+				FO[i].F.x = FO[i - 1].F.x - 3;
+				FO[i].F.y = FO[i - 1].F.y - 2;
+			}
+		}
     }
     void Ve() {
         ShowCur(false);
@@ -51,6 +76,41 @@ public:
                 cout << "o";
         }
     }
+    void vemoi(FOOD f)
+	{
+		if (f.kc == 1)
+			{
+				gotoxy(f.F.x, f.F.y);
+				cout << "x";
+			}
+		else if (f.kc == 2)
+			{
+				gotoxy(f.F.x, f.F.y);
+				cout << "X";
+			}
+	}
+	int anmoi(FOOD f)
+	{
+		if (A[0].x == f.F.x&&A[0].y == f.F.y)
+		{
+
+			if (f.kc == 1)
+			{
+				DoDai++;
+				A[DoDai - 1] = A[DoDai - 2];
+				return 1;
+			}
+			else if (f.kc == 2)
+			{
+				DoDai += 3;
+				A[DoDai - 1] = A[DoDai - 2];
+				A[DoDai - 2] = A[DoDai - 3];
+				A[DoDai - 3] = A[DoDai - 4];
+				return 1;
+			}	
+		}
+		return 0;
+	}
     int EndGame() {
         if (A[0].x == 0 || A[0].y == 0 || A[DoDai - 1].x == FRAME_WIDTH || A[DoDai - 1].y == FRAME_HEIGHT) {
             system("cls");
@@ -71,7 +131,14 @@ public:
             return 1;
         }
         else
-            return 0;
+		{
+			for (int i = 1; i < DoDai; i++)
+				{
+					if (A[0].x == A[i].x &&A[0].y == A[i].y) return 1;
+				
+				}
+				return 0;
+		}
     }
     void DiChuyen(int Huong) {
         for (int i = DoDai - 1; i > 0;i--)
@@ -100,10 +167,25 @@ int main()
         }
         system("cls");
         r.Ve();
+        if (s < r.slm)
+		{
+			if (r.anmoi(r.FO[s]) == 0)
+			{
+				r.vemoi(r.FO[s]);
+			}
+		}
+		if (r.anmoi(r.FO[s]) == 1)
+		{
+			s++;
+
+		}
+		else
+		{
+			Sleep(200);
+		}
         if (r.EndGame())
             break;
         r.DiChuyen(Huong);
-        Sleep(0);
     }
 
     return 0;
