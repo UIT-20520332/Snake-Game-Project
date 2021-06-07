@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include <windows.h>
 #include <cstdlib>
 #include <conio.h>
@@ -24,41 +24,11 @@ class CONRAN {
 public:
     struct Point A[100];
     int DoDai;
-    struct FOOD
-    {
-        POINT F;
-        int kc;
-    };
-    FOOD FO[100];
-    int slm;
     CONRAN() {
         DoDai = 3;
         A[0].x = 12; A[0].y = 10;
         A[1].x = 11; A[1].y = 10;
         A[2].x = 10; A[2].y = 10;
-        slm = 50;
-        FO[0].F.x = 5;
-        FO[0].F.y = 5;
-        for (int i = 1; i <= slm; i++)
-        {
-            if ((i - 1) % 5 == 0 && (i - 1) != 0) FO[i - 1].kc = 2;
-            else FO[i - 1].kc = 1;
-            if ((i) % 2 == 0)
-            {
-                FO[i].F.x = FO[i - 1].F.x + 7;
-                FO[i].F.y = FO[i - 1].F.y + 6;
-            }
-            else
-            {
-                FO[i].F.x = FO[i - 1].F.x - 3;
-                FO[i].F.y = FO[i - 1].F.y - 4;
-            }
-            if (FO[i].F.x >= FRAME_WIDTH - 1 || FO[i].F.y >= FRAME_HEIGHT - 1 || FO[i].F.x == 0 || FO[i].F.y == 0)
-            {
-                FO[i].F.x = 15;
-                FO[i].F.y = 5;
-            }
-        }
     }
     void Ve() {
         ShowCur(false); // Ẩn con trỏ
@@ -86,31 +56,18 @@ public:
                 cout << "o";
         }
     }
-    void vemoi(FOOD f)
+    int anmoi(POINT f,int kc)
     {
-        if (f.kc == 1)
-        {
-            gotoxy(f.F.x, f.F.y);
-            cout << "o";
-        }
-        else if (f.kc == 2)
-        {
-            gotoxy(f.F.x, f.F.y);
-            cout << "O";
-        }
-    }
-    int anmoi(FOOD f)
-    {
-        if (A[0].x == f.F.x && A[0].y == f.F.y)
+        if (A[0].x == f.x && A[0].y == f.y)
         {
 
-            if (f.kc == 1)
+            if (kc == 1)
             {
                 DoDai++;
                 A[DoDai - 1] = A[DoDai - 2];
                 return 1;
             }
-            else if (f.kc == 2)
+            else if (kc == 2)
             {
                 DoDai += 3;
                 A[DoDai - 1] = A[DoDai - 2];
@@ -167,6 +124,11 @@ int main()
     int Huong = 0;
     char t;
     int s = 0;
+	int kc;
+	POINT FOOD;
+	srand(time(NULL));
+	FOOD.x = rand() % (50 - 0 + 1) + 0;
+	FOOD.y = rand() % (20 - 0 + 1) + 0;
     while (1) {
         if (_kbhit()) {
             t = _getch();
@@ -175,35 +137,49 @@ int main()
             if (t == 'd') Huong = 0;
             if (t == 's') Huong = 1;
         }
-        system("cls");
-        r.Ve();
-        if (s < r.slm)
-        {
-            if (r.anmoi(r.FO[s]) == 0)
-            {
-                r.vemoi(r.FO[s]);
-            }
-        }
-        if (r.anmoi(r.FO[s]) == 1)
-        {
-            s++;
+        if (s % 5 == 0 && s != 0) kc = 2;
+		else kc = 1;
+		system("cls");
+		r.Ve();
+		if (1)
+		{
+			if (r.anmoi(FOOD,kc) == 0)
+			{
+				if (kc == 1)
+				{
+					gotoxy(FOOD.x, FOOD.y);
+					cout << "x";
+				}
+				else if (kc == 2)
+				{
+					gotoxy(FOOD.x, FOOD.y);
+					cout << "X";
+				}
+			}
+		}
+		if (r.anmoi(FOOD,kc) == 1)
+		{
+			s++;
+			srand(time(NULL));
+			FOOD.x = rand() % (48 - 1 + 1) + 1;
+			FOOD.y = rand() % (18 - 3 + 1) + 3;
+		}
+		else
+		{
+			Sleep(50);
+		}
+		if (r.EndGame())
+		{
+			system("cls");
+			cout << " You ARE SO STUPID . GAME OVER";
+			Sleep(1000);
+			break;
+		}
+		r.DiChuyen(Huong);
+		//Sleep(200);
+	}
 
-        }
-        else
-        {
-            Sleep(100);
-        }
-        if (r.EndGame())
-        {
-            system("cls");
-            cout << " You ARE SO STUPID . GAME OVER";
-            Sleep(1000);
-            break;
-        }
-        r.DiChuyen(Huong);
-    }
-
-    return 0;
+	return 0;
 }
 
 // Đưa con trỏ đến vị trí column line
