@@ -56,25 +56,13 @@ public:
                 cout << "o";
         }
     }
-    int anmoi(POINT f,int kc)
+    int anmoi(POINT f)
     {
         if (A[0].x == f.x && A[0].y == f.y)
         {
-
-            if (kc == 1)
-            {
-                DoDai++;
-                A[DoDai - 1] = A[DoDai - 2];
-                return 1;
-            }
-            else if (kc == 2)
-            {
-                DoDai += 3;
-                A[DoDai - 1] = A[DoDai - 2];
-                A[DoDai - 2] = A[DoDai - 3];
-                A[DoDai - 3] = A[DoDai - 4];
-                return 1;
-            }
+            DoDai++;
+            A[DoDai - 1] = A[DoDai - 2];
+            return 1;
         }
         return 0;
     }
@@ -123,12 +111,10 @@ int main()
     CONRAN r;
     int Huong = 0;
     char t;
-    int s = 0;
-	int kc;
 	POINT FOOD;
 	srand(time(NULL));
-	FOOD.x = rand() % (50 - 0 + 1) + 0;
-	FOOD.y = rand() % (20 - 0 + 1) + 0;
+	FOOD.x = rand() % ((FRAME_WIDTH-1) - 1 + 1) + 1;
+	FOOD.y = rand() % ((FRAME_HEIGHT-2) - 3 + 1) + 3;
     while (1) {
         if (_kbhit()) {
             t = _getch();
@@ -137,32 +123,19 @@ int main()
             if (t == 'd') Huong = 0;
             if (t == 's') Huong = 1;
         }
-        if (s % 5 == 0 && s != 0) kc = 2;
-		else kc = 1;
 		system("cls");
 		r.Ve();
-		if (1)
+		if (r.anmoi(FOOD) == 0)
 		{
-			if (r.anmoi(FOOD,kc) == 0)
-			{
-				if (kc == 1)
-				{
-					gotoxy(FOOD.x, FOOD.y);
-					cout << "x";
-				}
-				else if (kc == 2)
-				{
-					gotoxy(FOOD.x, FOOD.y);
-					cout << "X";
-				}
-			}
+			gotoxy(FOOD.x, FOOD.y);
+			cout << "x";
+				
 		}
-		if (r.anmoi(FOOD,kc) == 1)
+		if (r.anmoi(FOOD) == 1)
 		{
-			s++;
 			srand(time(NULL));
-			FOOD.x = rand() % (48 - 1 + 1) + 1;
-			FOOD.y = rand() % (18 - 3 + 1) + 3;
+			FOOD.x = rand() % ((FRAME_WIDTH-1) - 1 + 1) + 1;
+			FOOD.y = rand() % ((FRAME_HEIGHT-2) - 3 + 1) + 3;
 		}
 		else
 		{
