@@ -32,9 +32,9 @@ public:
 	int slm;
     CONRAN() {
         DoDai = 3;
-        A[0].x = 10; A[0].y = 10;
+        A[0].x = 12; A[0].y = 10;
         A[1].x = 11; A[1].y = 10;
-        A[2].x = 12; A[2].y = 10;
+        A[2].x = 10; A[2].y = 10;
         slm = 50;
 		FO[0].F.x = 5;
 		FO[0].F.y = 5;
@@ -50,7 +50,12 @@ public:
 			else
 			{
 				FO[i].F.x = FO[i - 1].F.x - 3;
-				FO[i].F.y = FO[i - 1].F.y - 2;
+				FO[i].F.y = FO[i - 1].F.y - 4;
+			}
+			if (FO[i].F.x >= FRAME_WIDTH-1 || FO[i].F.y >= FRAME_HEIGHT-1 || FO[i].F.x == 0 || FO[i].F.y==0)
+			{
+				FO[i].F.x = 15;
+				FO[i].F.y = 5;
 			}
 		}
     }
@@ -156,7 +161,7 @@ int main()
     CONRAN r;
     int Huong = 0;
     char t;
-
+    int s=0;
     while (1) {
         if (_kbhit()) {
             t = _getch();
@@ -181,10 +186,15 @@ int main()
 		}
 		else
 		{
-			Sleep(200);
+			Sleep(100);
 		}
         if (r.EndGame())
-            break;
+		{
+			system("cls");
+			cout << " You ARE SO STUPID . GAME OVER";
+			Sleep(1000);
+			break;
+		}
         r.DiChuyen(Huong);
     }
 
