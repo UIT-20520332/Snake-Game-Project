@@ -1,12 +1,12 @@
-#include <iostream>
+﻿#include <iostream>
 #include <windows.h>
 #include <cstdlib>
 #include <conio.h>
 #include <stdio.h>
 #include <ctime>
 
-#define FRAME_WIDTH 50
-#define FRAME_HEIGHT 20
+#define FRAME_WIDTH 60
+#define FRAME_HEIGHT 28
 
 using namespace std;
 
@@ -33,21 +33,28 @@ public:
     void Ve() {
         ShowCur(false); // Ẩn con trỏ
 
-        // Vẽ khung
-        for (int i = 0; i < FRAME_WIDTH; i++) {
-            gotoxy(i, 0);
-            cout << "#";
-            gotoxy(i, FRAME_HEIGHT - 1);
-            cout << "#";
-        }
-        for (int i = 1; i < FRAME_HEIGHT; i++) {
-            gotoxy(0, i);
-            cout << "#";
-            gotoxy(FRAME_WIDTH - 1, i);
-            cout << "#";
-        }
+        // Hướng dẫn
+        int Color;
+        srand(time(0));
+        Color = rand() % 15 + 1;
+        SetColor(Color);
+        gotoxy(FRAME_WIDTH + 17, 6);
+        cout << "MOVE";
+        gotoxy(FRAME_WIDTH + 10, 8);
+        cout << "w: UP";
+        gotoxy(FRAME_WIDTH + 10, 10);
+        cout << "s: DOWN";
+        gotoxy(FRAME_WIDTH + 20, 8);
+        cout << "a: LEFT";
+        gotoxy(FRAME_WIDTH + 20, 10);
+        cout << "d: RIGHT";
 
         // Vẽ con rắn
+        /*int iColor;
+        srand(time(NULL));
+        iColor = rand() % 15 + 1;
+        SetColor(iColor);*/
+        SetColor(14);
         for (int i = 0; i < DoDai; i++) {
             gotoxy(A[i].x, A[i].y);
             if (i == 0)
@@ -68,21 +75,7 @@ public:
     }
     int EndGame() {
         if ((A[0].x == 0) || (A[0].y == 0) || (A[0].x == FRAME_WIDTH - 1) || (A[0].y == FRAME_HEIGHT - 1)) {
-            system("cls");
-            for (int i = 0; i < FRAME_WIDTH; i++) {
-                gotoxy(i, 0);
-                cout << "#";
-                gotoxy(i, FRAME_HEIGHT - 1);
-                cout << "#";
-            }
-            for (int i = 1; i < FRAME_HEIGHT; i++) {
-                gotoxy(0, i);
-                cout << "#";
-                gotoxy(FRAME_WIDTH - 1, i);
-                cout << "#";
-            }
-            gotoxy(FRAME_WIDTH / 2, FRAME_HEIGHT / 2);
-            cout << "Game Over";
+            Sleep(1000);
             return 1;
         }
         else
@@ -96,6 +89,8 @@ public:
         }
     }
     void DiChuyen(int Huong) {
+        gotoxy(A[DoDai - 1].x, A[DoDai - 1].y);
+        cout << " ";
         for (int i = DoDai - 1; i > 0;i--)
             A[i] = A[i - 1];
         if (Huong == 0) A[0].x = A[0].x + 1;
@@ -111,10 +106,26 @@ int main()
     CONRAN r;
     int Huong = 0;
     char t;
-	POINT FOOD;
-	srand(time(NULL));
-	FOOD.x = rand() % ((FRAME_WIDTH-1) - 1 + 1) + 1;
-	FOOD.y = rand() % ((FRAME_HEIGHT-2) - 3 + 1) + 3;
+    POINT FOOD;
+    srand(time(0));
+    FOOD.x = rand() % ((FRAME_WIDTH - 1) - 1 + 1) + 1;
+    FOOD.y = rand() % ((FRAME_HEIGHT - 2) - 3 + 1) + 3;
+
+    // Vẽ khung
+    SetColor(13);
+    for (int i = 0; i < FRAME_WIDTH; i++) {
+        gotoxy(i, 0);
+        cout << "#";
+        gotoxy(i, FRAME_HEIGHT - 1);
+        cout << "#";
+    }
+    for (int i = 1; i < FRAME_HEIGHT; i++) {
+        gotoxy(0, i);
+        cout << "#";
+        gotoxy(FRAME_WIDTH - 1, i);
+        cout << "#";
+    }
+
     while (1) {
         if (_kbhit()) {
             t = _getch();
@@ -123,36 +134,41 @@ int main()
             if (t == 'd') Huong = 0;
             if (t == 's') Huong = 1;
         }
-		system("cls");
-		r.Ve();
-		if (r.anmoi(FOOD) == 0)
-		{
-			gotoxy(FOOD.x, FOOD.y);
-			cout << "x";
-				
-		}
-		if (r.anmoi(FOOD) == 1)
-		{
-			srand(time(NULL));
-			FOOD.x = rand() % ((FRAME_WIDTH-1) - 1 + 1) + 1;
-			FOOD.y = rand() % ((FRAME_HEIGHT-2) - 3 + 1) + 3;
-		}
-		else
-		{
-			Sleep(50);
-		}
-		if (r.EndGame())
-		{
-			system("cls");
-			cout << " You ARE SO STUPID . GAME OVER";
-			Sleep(1000);
-			break;
-		}
-		r.DiChuyen(Huong);
-		//Sleep(200);
-	}
+        r.Ve();
+        if (r.anmoi(FOOD) == 0)
+        {
+            gotoxy(FOOD.x, FOOD.y);
+            int iColor;
+            srand(time(0));
+            iColor = rand() % 15 + 1;
+            SetColor(iColor);
+            cout << "o";
 
-	return 0;
+        }
+        if (r.anmoi(FOOD) == 1)
+        {
+            srand(time(0));
+            FOOD.x = rand() % ((FRAME_WIDTH - 1) - 1 + 1) + 1;
+            FOOD.y = rand() % ((FRAME_HEIGHT - 2) - 3 + 1) + 3;
+        }
+        else
+        {
+            Sleep(100);
+        }
+        if (r.EndGame())
+        {
+            system("cls");
+            SetColor(9);
+            gotoxy(50, 15);
+            cout << "GAME OVER";
+            Sleep(1000);
+            break;
+        }
+        r.DiChuyen(Huong);
+        //Sleep(200);
+    }
+
+    return 0;
 }
 
 // Đưa con trỏ đến vị trí column line
