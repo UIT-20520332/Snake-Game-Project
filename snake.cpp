@@ -182,7 +182,7 @@ void StartGame() {
     char t;
     POINT FOOD;
     srand(time(NULL));
-    FOOD.x = rand() % ((FRAME_WIDTH - 1) - 1 + 1) + 1;
+    FOOD.x = rand() % ((FRAME_WIDTH - 2) - 1 + 1) + 1;
     FOOD.y = rand() % ((FRAME_HEIGHT - 2) - 3 + 1) + 3;
 
     // Vẽ khung
@@ -256,7 +256,7 @@ void StartGame() {
         if (r.anmoi(FOOD) == 1)
         {
             srand(time(NULL));
-            FOOD.x = rand() % ((FRAME_WIDTH - 1) - 1 + 1) + 1;
+            FOOD.x = rand() % ((FRAME_WIDTH - 2) - 1 + 1) + 1;
             FOOD.y = rand() % ((FRAME_HEIGHT - 2) - 3 + 1) + 3;
             Diem += 10;
         }
