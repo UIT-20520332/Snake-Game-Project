@@ -4,20 +4,32 @@
 #include <conio.h>
 #include <stdio.h>
 #include <ctime>
+#include <fstream>
 #define FRAME_WIDTH 60
 #define FRAME_HEIGHT 28
 
 using namespace std;
+
+#pragma comment(lib, "winmm.lib")
 
 void gotoxy(int column, int line);
 void SetColor(WORD color);
 void ShowCur(bool CursorVisibility);
 void ChooseOptions();
 void StartGame();
+//void initHighScore();
 int whereX();
 int whereY();
 
 int Diem = 0;
+
+class HighScore {
+public:
+    int score;
+    string name;
+};
+
+HighScore highscore[5];
 
 struct Point {
     int x, y;
@@ -85,12 +97,14 @@ public:
         {
             DoDai++;
             A[DoDai - 1] = A[DoDai - 2];
+            PlaySound(TEXT("SNAKE_eatFood.wav"), NULL, SND_ASYNC);
             return 1;
         }
         return 0;
     }
     int EndGame() {
         if ((A[0].x == 0) || (A[0].y == 0) || (A[0].x == FRAME_WIDTH - 1) || (A[0].y == FRAME_HEIGHT - 1)) {
+            PlaySound(TEXT("SNAKE_endGame.wav"), NULL, SND_ASYNC);
             Sleep(1000);
             return 1;
         }
@@ -98,8 +112,10 @@ public:
         {
             for (int i = 1; i < DoDai; i++)
             {
-                if (A[0].x == A[i].x && A[0].y == A[i].y) return 1;
-
+                if (A[0].x == A[i].x && A[0].y == A[i].y) {
+                    PlaySound(TEXT("SNAKE_endGame.wav"), NULL, SND_ASYNC);
+                    return 1;
+                }
             }
             return 0;
         }
@@ -118,9 +134,19 @@ public:
 
 int main()
 {
+    //initHighScore();
     ChooseOptions();
     return 0;
 }
+
+/*void initHighScore() {
+    fstream f;
+    f.open("highscore.txt", ios::out);
+
+
+
+    f.close();
+}*/
 
 void ChooseOptions() {
     ShowCur(false);
@@ -164,8 +190,10 @@ void ChooseOptions() {
         }
         pse = _getch();
     }
-    if (Option == 1)
+    if (Option == 1) {
+        PlaySound(TEXT("SNAKE_start.wav"), NULL, SND_ASYNC);
         StartGame();
+    }
     else {
         system("cls");
         exit(0);
@@ -204,6 +232,7 @@ void StartGame() {
     while (1) {
         if (_kbhit()) {
             t = _getch();
+            PlaySound(TEXT("SNAKE_beep.wav"), NULL, SND_ASYNC);
             if (t == 'a') Huong = 2;
             if (t == 'w') Huong = 3;
             if (t == 'd') Huong = 0;
@@ -275,8 +304,10 @@ void StartGame() {
             Ops = _getch();
             while (Ops != 'y' && Ops != 'n')
                 Ops = _getch();
-            if (Ops == 'y')
+            if (Ops == 'y') {
+                PlaySound(TEXT("SNAKE_start.wav"), NULL, SND_ASYNC);
                 StartGame();
+            }
             else {
                 system("cls");
                 exit(0);
@@ -284,7 +315,7 @@ void StartGame() {
             break;
         }
         r.DiChuyen(Huong);
-        //Sleep(200);
+        //Sleep(100);
     }
 }
 
