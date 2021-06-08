@@ -13,8 +13,12 @@ using namespace std;
 void gotoxy(int column, int line);
 void SetColor(WORD color);
 void ShowCur(bool CursorVisibility);
+void ChooseOptions();
+void StartGame();
 int whereX();
 int whereY();
+
+int Diem = 0;
 
 struct Point {
     int x, y;
@@ -32,28 +36,41 @@ public:
     }
     void Ve() {
         ShowCur(false); // Ẩn con trỏ
+        SetColor(12);
 
-        // Hướng dẫn
+        // bảng hướng dẫn
         int Color;
-        srand(time(0));
+        srand(time(NULL));
         Color = rand() % 15 + 1;
         SetColor(Color);
-        gotoxy(FRAME_WIDTH + 17, 6);
-        cout << "MOVE";
-        gotoxy(FRAME_WIDTH + 10, 8);
-        cout << "w: UP";
-        gotoxy(FRAME_WIDTH + 10, 10);
-        cout << "s: DOWN";
-        gotoxy(FRAME_WIDTH + 20, 8);
-        cout << "a: LEFT";
-        gotoxy(FRAME_WIDTH + 20, 10);
-        cout << "d: RIGHT";
+        for (int i = 70; i < 100; i++) {
+            gotoxy(i, 0);
+            cout << "#";
+            gotoxy(i, 10 - 1);
+            cout << "#";
+        }
+        for (int i = 1; i < 10; i++) {
+            gotoxy(70, i);
+            cout << "#";
+            gotoxy(100 - 1, i);
+            cout << "#";
+        }
+        gotoxy(72, 2);
+        cout << " w = len ";
+        gotoxy(72, 3);
+        cout << " s = xuong ";
+        gotoxy(72, 4);
+        cout << " a = qua trai ";
+        gotoxy(72, 5);
+        cout << " s = qua phai ";
+        gotoxy(72, 6);
+        cout << " space = pause/continue ";
+        gotoxy(72, 7);
+        cout << " esc = quit ";
+        gotoxy(70, 12);
+        cout << "Score: " << Diem;
 
         // Vẽ con rắn
-        /*int iColor;
-        srand(time(NULL));
-        iColor = rand() % 15 + 1;
-        SetColor(iColor);*/
         SetColor(14);
         for (int i = 0; i < DoDai; i++) {
             gotoxy(A[i].x, A[i].y);
@@ -102,12 +119,69 @@ public:
 
 int main()
 {
-    //initwindow(600,600);
+    ChooseOptions();
+    return 0;
+}
+
+void ChooseOptions() {
+    ShowCur(false);
+    gotoxy(47, 14);
+    SetColor(4);
+    cout << ">> Start <<";
+    gotoxy(50, 15);
+    SetColor(15);
+    cout << "Quit";
+
+    char pse;
+    int Option = 1;
+    pse = _getch();
+
+    while (pse != 13) {
+        if (pse == 'w' || pse == 's') {
+            if (Option == 1) {
+                Option++;
+                gotoxy(47, 14);
+                cout << "           ";
+                gotoxy(50, 14);
+                SetColor(15);
+                cout << "Start";
+                gotoxy(47, 15);
+                SetColor(4);
+                cout << ">> Quit <<";
+            }
+            else {
+                if (Option == 2) {
+                    Option--;
+                    gotoxy(47, 15);
+                    cout << "          ";
+                    gotoxy(47, 14);
+                    SetColor(4);
+                    cout << ">> Start <<";
+                    gotoxy(50, 15);
+                    SetColor(15);
+                    cout << "Quit";
+                }
+            }
+        }
+        pse = _getch();
+    }
+    if (Option == 1)
+        StartGame();
+    else {
+        system("cls");
+        exit(0);
+    }
+}
+
+// Bắt đầu Game
+void StartGame() {
+    system("cls");
+    Diem = 0;
     CONRAN r;
     int Huong = 0;
     char t;
     POINT FOOD;
-    srand(time(0));
+    srand(time(NULL));
     FOOD.x = rand() % ((FRAME_WIDTH - 1) - 1 + 1) + 1;
     FOOD.y = rand() % ((FRAME_HEIGHT - 2) - 3 + 1) + 3;
 
@@ -126,6 +200,8 @@ int main()
         cout << "#";
     }
 
+    char pse;
+    int pc = 0;
     while (1) {
         if (_kbhit()) {
             t = _getch();
@@ -133,13 +209,45 @@ int main()
             if (t == 'w') Huong = 3;
             if (t == 'd') Huong = 0;
             if (t == 's') Huong = 1;
+            if (t == ' ')
+            {
+                gotoxy(FRAME_WIDTH / 2 - 10, FRAME_HEIGHT / 2);
+                cout << "press SPACE to continue";
+                pse = _getch();
+                while (pse != ' ' && pse != 27)
+                    pse = _getch();
+                if (pse == ' ')
+                {
+                    gotoxy(FRAME_WIDTH / 2 - 10, FRAME_HEIGHT / 2);
+                    cout << "                       ";
+                }
+                else {
+                    if (pse == 27)
+                    {
+                        system("cls");
+                        gotoxy(FRAME_WIDTH / 2, FRAME_HEIGHT / 2);
+                        cout << "END GAME";
+                        Sleep(1000);
+                        system("cls");
+                        break;
+                    }
+                }
+            }
+            if (t == 27)
+            {
+                gotoxy(FRAME_WIDTH / 2, FRAME_HEIGHT / 2);
+                cout << "END GAME";
+                Sleep(1000);
+                system("cls");
+                break;
+            }
         }
         r.Ve();
         if (r.anmoi(FOOD) == 0)
         {
             gotoxy(FOOD.x, FOOD.y);
             int iColor;
-            srand(time(0));
+            srand(time(NULL));
             iColor = rand() % 15 + 1;
             SetColor(iColor);
             cout << "o";
@@ -147,9 +255,10 @@ int main()
         }
         if (r.anmoi(FOOD) == 1)
         {
-            srand(time(0));
+            srand(time(NULL));
             FOOD.x = rand() % ((FRAME_WIDTH - 1) - 1 + 1) + 1;
             FOOD.y = rand() % ((FRAME_HEIGHT - 2) - 3 + 1) + 3;
+            Diem += 10;
         }
         else
         {
@@ -158,17 +267,26 @@ int main()
         if (r.EndGame())
         {
             system("cls");
-            SetColor(9);
-            gotoxy(50, 15);
-            cout << "GAME OVER";
+            //gotoxy(FRAME_WIDTH / 2, FRAME_HEIGHT / 2);
+            cout << "Your score: " << Diem;
             Sleep(1000);
+            system("cls");
+            cout << "Ban co muon choi lai? [y/n]: ";
+            char Ops;
+            Ops = _getch();
+            while (Ops != 'y' && Ops != 'n')
+                Ops = _getch();
+            if (Ops == 'y')
+                StartGame();
+            else {
+                system("cls");
+                exit(0);
+            }
             break;
         }
         r.DiChuyen(Huong);
         //Sleep(200);
     }
-
-    return 0;
 }
 
 // Đưa con trỏ đến vị trí column line
