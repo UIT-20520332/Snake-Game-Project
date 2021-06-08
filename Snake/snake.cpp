@@ -97,14 +97,14 @@ public:
         {
             DoDai++;
             A[DoDai - 1] = A[DoDai - 2];
-            PlaySound(TEXT("eatFood.wav"), NULL, SND_ASYNC);
+            PlaySound(TEXT("SNAKE_eatFood.wav"), NULL, SND_ASYNC);
             return 1;
         }
         return 0;
     }
     int EndGame() {
         if ((A[0].x == 0) || (A[0].y == 0) || (A[0].x == FRAME_WIDTH - 1) || (A[0].y == FRAME_HEIGHT - 1)) {
-            PlaySound(TEXT("endGame.wav"), NULL, SND_ASYNC);
+            PlaySound(TEXT("SNAKE_endGame.wav"), NULL, SND_ASYNC);
             Sleep(1000);
             return 1;
         }
@@ -113,7 +113,7 @@ public:
             for (int i = 1; i < DoDai; i++)
             {
                 if (A[0].x == A[i].x && A[0].y == A[i].y) {
-                    PlaySound(TEXT("endGame.wav"), NULL, SND_ASYNC);
+                    PlaySound(TEXT("SNAKE_endGame.wav"), NULL, SND_ASYNC);
                     return 1;
                 }
             }
@@ -191,7 +191,7 @@ void ChooseOptions() {
         pse = _getch();
     }
     if (Option == 1) {
-        PlaySound(TEXT("start.wav"), NULL, SND_ASYNC);
+        PlaySound(TEXT("SNAKE_start.wav"), NULL, SND_ASYNC);
         StartGame();
     }
     else {
@@ -232,7 +232,7 @@ void StartGame() {
     while (1) {
         if (_kbhit()) {
             t = _getch();
-            PlaySound(TEXT("beep.wav"), NULL, SND_ASYNC);
+            PlaySound(TEXT("SNAKE_beep.wav"), NULL, SND_ASYNC);
             if (t == 'a') Huong = 2;
             if (t == 'w') Huong = 3;
             if (t == 'd') Huong = 0;
@@ -305,7 +305,7 @@ void StartGame() {
             while (Ops != 'y' && Ops != 'n')
                 Ops = _getch();
             if (Ops == 'y') {
-                PlaySound(TEXT("start.wav"), NULL, SND_ASYNC);
+                PlaySound(TEXT("SNAKE_start.wav"), NULL, SND_ASYNC);
                 StartGame();
             }
             else {
