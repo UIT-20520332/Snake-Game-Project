@@ -5,6 +5,9 @@
 #include <stdio.h>
 #include <ctime>
 #include <fstream>
+#include <string>
+
+#define MAX_OPTION 3
 #define FRAME_WIDTH 60
 #define FRAME_HEIGHT 28
 
@@ -17,7 +20,11 @@ void SetColor(WORD color);
 void ShowCur(bool CursorVisibility);
 void ChooseOptions();
 void StartGame();
-//void initHighScore();
+void initHighScore();
+void setupHighScore();
+void checkHighScore(char _name[50], int _score);
+void showHighScore();
+void loadHighScore();
 int whereX();
 int whereY();
 
@@ -26,7 +33,7 @@ int Diem = 0;
 class HighScore {
 public:
     int score;
-    string name;
+    char name[50];
 };
 
 HighScore highscore[5];
@@ -148,57 +155,215 @@ public:
 
 int main()
 {
-    //initHighScore();
+    initHighScore();
+    setupHighScore();
     ChooseOptions();
+    loadHighScore();
     return 0;
 }
 
-/*void initHighScore() {
+void initHighScore() {
+    fstream f;
+    f.open("highscore.txt", ios::in);
+    if (f.fail()) {
+        f.close();
+        f.open("highscore.txt", ios::out);
+        char data[100] = "HIGH SCORE\n"
+            "PLAYER 0\n"
+            "PLAYER 0\n"
+            "PLAYER 0\n"
+            "PLAYER 0\n"
+            "PLAYER 0\n";
+        f << data;
+        f.close();
+    }
+    f.close();
+}
+
+void setupHighScore() {
+    fstream f;
+    f.open("highscore.txt", ios::in);
+    char line[50];
+    int Count = 0, i = 0;
+    while (!f.eof()) {
+        Count++;
+        f >> line;
+        if (Count > 2)
+            if (Count % 2 == 1) {
+                strcpy_s(highscore[i].name, line);
+            }
+            else {
+                highscore[i].score = atoi(line);
+                i++;
+            }
+    }
+    f.close();
+}
+
+void checkHighScore(char _name[50], int _score) {
+    for (int i = 0; i < 5; i++) {
+        if (_score >= highscore[i].score) {
+            for (int j = 4; j > i; j--) {
+                strcpy_s(highscore[j].name, highscore[j - 1].name);
+                highscore[j].score = highscore[j - 1].score;
+            }
+            strcpy_s(highscore[i].name, _name);
+            highscore[i].score = _score;
+            break;
+        }
+    }
+}
+
+void showHighScore() {
+    system("cls");
+    gotoxy(105, 28);
+    cout << "esc = return";
+    fstream f;
+    f.open("highscore.txt", ios::in);
+    string data;
+    int i = 0;
+    int y = 9;
+    while (!f.eof()) {
+        getline(f, data);
+        i++;
+        y++;
+        if (i == 1) {
+            gotoxy(55, y);
+            SetColor(6);
+            cout << data << endl;
+        }
+        else {
+            gotoxy(50, y);
+            SetColor(9);
+            cout << data << endl;
+        }
+    }
+    f.close();
+    char t = _getch();
+    while (t != 27)
+        t = _getch();
+    if (t == 27)
+        ChooseOptions();
+}
+
+void loadHighScore() {
     fstream f;
     f.open("highscore.txt", ios::out);
-
-
-
+    f << "HIGH SCORE\n";
+    for (int i = 0; i < 5; i++) {
+        f << highscore[i].name;
+        f << "\t\t";
+        f << highscore[i].score;
+        f << "\n";
+    }
     f.close();
-}*/
+}
 
 void ChooseOptions() {
     ShowCur(false);
-    gotoxy(47, 14);
+    system("cls");
+    gotoxy(47, 13);
     SetColor(4);
-    cout << ">> Start <<";
+    cout << ">> START GAME <<";
+    gotoxy(50, 14);
+    SetColor(15);
+    cout << "HIGH SCORE";
     gotoxy(50, 15);
     SetColor(15);
-    cout << "Quit";
+    cout << "QUIT GAME";
 
     char pse;
     int Option = 1;
     pse = _getch();
 
     while (pse != 13) {
-        if (pse == 'w' || pse == 's') {
+        if (pse == 's') {
+            Option++;
+            if (Option > MAX_OPTION)
+                Option = 1;
             if (Option == 1) {
-                Option++;
-                gotoxy(47, 14);
-                cout << "           ";
+                gotoxy(47, 15);
+                cout << "               ";
+                gotoxy(47, 13);
+                SetColor(4);
+                cout << ">> START GAME <<";
                 gotoxy(50, 14);
                 SetColor(15);
-                cout << "Start";
+                cout << "HIGH SCORE";
+                gotoxy(50, 15);
+                SetColor(15);
+                cout << "QUIT GAME";
+            }
+            else if (Option == 2) {
+                gotoxy(47, 13);
+                cout << "                ";
+                gotoxy(50, 13);
+                SetColor(15);
+                cout << "START GAME";
+                gotoxy(47, 14);
+                SetColor(4);
+                cout << ">> HIGH SCORE <<";
+                gotoxy(50, 15);
+                SetColor(15);
+                cout << "QUIT GAME";
+            }
+            else if (Option == 3) {
+                gotoxy(47, 14);
+                cout << "                ";
+                gotoxy(50, 13);
+                SetColor(15);
+                cout << "START GAME";
+                gotoxy(50, 14);
+                SetColor(15);
+                cout << "HIGH SCORE";
                 gotoxy(47, 15);
                 SetColor(4);
-                cout << ">> Quit <<";
+                cout << ">> QUIT GAME <<";
             }
-            else {
-                if (Option == 2) {
-                    Option--;
-                    gotoxy(47, 15);
-                    cout << "          ";
+        }
+        else {
+            if (pse == 'w') {
+                Option--;
+                if (Option < 1)
+                    Option = MAX_OPTION;
+                if (Option == 1) {
                     gotoxy(47, 14);
+                    cout << "                ";
+                    gotoxy(47, 13);
                     SetColor(4);
-                    cout << ">> Start <<";
+                    cout << ">> START GAME <<";
+                    gotoxy(50, 14);
+                    SetColor(15);
+                    cout << "HIGH SCORE";
                     gotoxy(50, 15);
                     SetColor(15);
-                    cout << "Quit";
+                    cout << "QUIT GAME";
+                }
+                else if (Option == 2) {
+                    gotoxy(47, 15);
+                    cout << "               ";
+                    gotoxy(50, 13);
+                    SetColor(15);
+                    cout << "START GAME";
+                    gotoxy(47, 14);
+                    SetColor(4);
+                    cout << ">> HIGH SCORE <<";
+                    gotoxy(50, 15);
+                    SetColor(15);
+                    cout << "QUIT GAME";
+                }
+                else if (Option == 3) {
+                    gotoxy(47, 13);
+                    cout << "                ";
+                    gotoxy(50, 13);
+                    SetColor(15);
+                    cout << "START GAME";
+                    gotoxy(50, 14);
+                    SetColor(15);
+                    cout << "HIGH SCORE";
+                    gotoxy(47, 15);
+                    SetColor(4);
+                    cout << ">> QUIT GAME <<";
                 }
             }
         }
@@ -208,7 +373,11 @@ void ChooseOptions() {
         //PlaySound(TEXT("SNAKE_start.wav"), NULL, SND_ASYNC);
         StartGame();
     }
-    else {
+    else if (Option == 2) {
+        showHighScore();
+        return;
+    }
+    else if (Option == 3) {
         system("cls");
         return;
     }
@@ -287,8 +456,13 @@ void StartGame() {
         {
             system("cls");
             //gotoxy(FRAME_WIDTH / 2, FRAME_HEIGHT / 2);
-            cout << "Your score: " << Diem;
-            Sleep(1000);
+            cout << "Your score: " << Diem << "\n";
+            Sleep(2000);
+            char _name[50];
+            cout << "Ten cua ban(khong nhap dau cach): ";
+            cin >> _name;
+            checkHighScore(_name, Diem);
+            Sleep(500);
             system("cls");
             cout << "Ban co muon choi lai? [y/n]: ";
             char Ops;
@@ -300,8 +474,8 @@ void StartGame() {
                 StartGame();
             }
             else {
-                system("cls");
-                exit(0);
+                loadHighScore();
+                ChooseOptions();
             }
             break;
         }
