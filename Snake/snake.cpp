@@ -39,11 +39,15 @@ class CONRAN {
 public:
     struct Point A[100];
     int DoDai;
+    Point FOOD;
     CONRAN() {
         DoDai = 3;
         A[0].x = 12; A[0].y = 10;
         A[1].x = 11; A[1].y = 10;
         A[2].x = 10; A[2].y = 10;
+        srand(time(NULL));
+        FOOD.x = rand() % ((FRAME_WIDTH - 2) - 2 + 1) + 2;
+        FOOD.y = rand() % ((FRAME_HEIGHT - 2) - 3 + 1) + 3;
     }
     void Ve() {
         ShowCur(false); // Ẩn con trỏ
@@ -91,16 +95,25 @@ public:
                 cout << "o";
         }
     }
-    int anmoi(POINT f)
+    int anmoi()
     {
-        if (A[0].x == f.x && A[0].y == f.y)
+        if (A[0].x == FOOD.x && A[0].y == FOOD.y)
         {
             DoDai++;
             A[DoDai - 1] = A[DoDai - 2];
             PlaySound(TEXT("SNAKE_eatFood.wav"), NULL, SND_ASYNC);
+            srand(time(NULL));
+            FOOD.x = rand() % ((FRAME_WIDTH - 2) - 2 + 1) + 2;
+            FOOD.y = rand() % ((FRAME_HEIGHT - 2) - 3 + 1) + 3;
+            Diem += 10;
             return 1;
         }
-        return 0;
+        else {
+            gotoxy(FOOD.x, FOOD.y);
+            SetColor(13);
+            cout << "o";
+            return 0;
+        }
     }
     int EndGame() {
         if ((A[0].x == 0) || (A[0].y == 0) || (A[0].x == FRAME_WIDTH - 1) || (A[0].y == FRAME_HEIGHT - 1)) {
@@ -114,6 +127,7 @@ public:
             {
                 if (A[0].x == A[i].x && A[0].y == A[i].y) {
                     PlaySound(TEXT("SNAKE_endGame.wav"), NULL, SND_ASYNC);
+                    Sleep(1000);
                     return 1;
                 }
             }
@@ -191,26 +205,23 @@ void ChooseOptions() {
         pse = _getch();
     }
     if (Option == 1) {
-        PlaySound(TEXT("SNAKE_start.wav"), NULL, SND_ASYNC);
+        //PlaySound(TEXT("SNAKE_start.wav"), NULL, SND_ASYNC);
         StartGame();
     }
     else {
         system("cls");
-        exit(0);
+        return;
     }
 }
 
 // Bắt đầu Game
 void StartGame() {
     system("cls");
+    PlaySound(TEXT("SNAKE_start.wav"), NULL, SND_ASYNC);
     Diem = 0;
     CONRAN r;
     int Huong = 0;
     char t;
-    POINT FOOD;
-    srand(time(NULL));
-    FOOD.x = rand() % ((FRAME_WIDTH - 2) - 2 + 1) + 2;
-    FOOD.y = rand() % ((FRAME_HEIGHT - 2) - 3 + 1) + 3;
 
     // Vẽ khung
     SetColor(13);
@@ -232,12 +243,12 @@ void StartGame() {
     while (1) {
         if (_kbhit()) {
             t = _getch();
-            PlaySound(TEXT("SNAKE_beep.wav"), NULL, SND_ASYNC);
+            //PlaySound(TEXT("SNAKE_beep.wav"), NULL, SND_ASYNC);
             if (t == 'a') Huong = 2;
-            if (t == 'w') Huong = 3;
-            if (t == 'd') Huong = 0;
-            if (t == 's') Huong = 1;
-            if (t == ' ')
+            else if (t == 'w') Huong = 3;
+            else if (t == 'd') Huong = 0;
+            else if (t == 's') Huong = 1;
+            else if (t == ' ')
             {
                 gotoxy(FRAME_WIDTH / 2 - 10, FRAME_HEIGHT / 2);
                 cout << "press SPACE to continue";
@@ -261,7 +272,7 @@ void StartGame() {
                     }
                 }
             }
-            if (t == 27)
+            else if (t == 27)
             {
                 gotoxy(FRAME_WIDTH / 2, FRAME_HEIGHT / 2);
                 cout << "END GAME";
@@ -271,27 +282,7 @@ void StartGame() {
             }
         }
         r.Ve();
-        if (r.anmoi(FOOD) == 0)
-        {
-            gotoxy(FOOD.x, FOOD.y);
-            int iColor;
-            srand(time(NULL));
-            iColor = rand() % 15 + 1;
-            SetColor(iColor);
-            cout << "o";
-
-        }
-        if (r.anmoi(FOOD) == 1)
-        {
-            srand(time(NULL));
-            FOOD.x = rand() % ((FRAME_WIDTH - 2) - 2 + 1) + 2;
-            FOOD.y = rand() % ((FRAME_HEIGHT - 2) - 3 + 1) + 3;
-            Diem += 10;
-        }
-        else
-        {
-            Sleep(100);
-        }
+        r.anmoi();
         if (r.EndGame())
         {
             system("cls");
@@ -305,7 +296,7 @@ void StartGame() {
             while (Ops != 'y' && Ops != 'n')
                 Ops = _getch();
             if (Ops == 'y') {
-                PlaySound(TEXT("SNAKE_start.wav"), NULL, SND_ASYNC);
+                //PlaySound(TEXT("SNAKE_start.wav"), NULL, SND_ASYNC);
                 StartGame();
             }
             else {
@@ -315,7 +306,7 @@ void StartGame() {
             break;
         }
         r.DiChuyen(Huong);
-        //Sleep(100);
+        Sleep(100);
     }
 }
 
