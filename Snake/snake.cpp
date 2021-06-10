@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include <windows.h>
 #include <cstdlib>
 #include <conio.h>
@@ -29,7 +29,7 @@ int whereX();
 int whereY();
 
 int Diem = 0;
-
+int MoiAn = 0;
 class HighScore {
 public:
     int score;
@@ -112,13 +112,27 @@ public:
             srand(time(NULL));
             FOOD.x = rand() % ((FRAME_WIDTH - 2) - 2 + 1) + 2;
             FOOD.y = rand() % ((FRAME_HEIGHT - 2) - 3 + 1) + 3;
-            Diem += 10;
+            MoiAn += 1;
+            if (MoiAn % 5 != 0)
+            {
+                Diem += 10;
+            }
+            else
+                Diem += 20;
             return 1;
         }
-        else {
+        else
+        {
             gotoxy(FOOD.x, FOOD.y);
             SetColor(13);
             cout << "o";
+            if (MoiAn % 5 == 4 && A[0].x != FOOD.x && A[0].y != FOOD.y)
+            {
+                gotoxy(FOOD.x, FOOD.y);
+                SetColor(13);
+                cout << "0";
+                return 0;
+            }
             return 0;
         }
     }
@@ -388,6 +402,7 @@ void StartGame() {
     system("cls");
     PlaySound(TEXT("SNAKE_start.wav"), NULL, SND_ASYNC);
     Diem = 0;
+    MoiAn = 0;
     CONRAN r;
     int Huong = 0;
     char t;
