@@ -123,17 +123,20 @@ public:
         }
         else
         {
-            gotoxy(FOOD.x, FOOD.y);
-            SetColor(13);
-            cout << "o";
-            if (MoiAn % 5 == 4 && A[0].x != FOOD.x && A[0].y != FOOD.y)
+            if(MoiAn % 5 !=4)
+            {
+                gotoxy(FOOD.x, FOOD.y);
+                SetColor(13);
+                cout << "o";
+                return 0;
+            }
+            else
             {
                 gotoxy(FOOD.x, FOOD.y);
                 SetColor(13);
                 cout << "0";
                 return 0;
             }
-            return 0;
         }
     }
     int EndGame() {
