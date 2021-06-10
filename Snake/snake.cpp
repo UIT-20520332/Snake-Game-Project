@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <windows.h>
 #include <cstdlib>
 #include <conio.h>
@@ -123,7 +123,7 @@ public:
         }
         else
         {
-            if(MoiAn % 5 !=4)
+            if (MoiAn % 5 != 4)
             {
                 gotoxy(FOOD.x, FOOD.y);
                 SetColor(13);
@@ -179,6 +179,7 @@ int main()
     return 0;
 }
 
+// Kiểm tra đã có file highscore.txt chưa
 void initHighScore() {
     fstream f;
     f.open("highscore.txt", ios::in);
@@ -197,6 +198,7 @@ void initHighScore() {
     f.close();
 }
 
+// Load high score vào chương trình
 void setupHighScore() {
     fstream f;
     f.open("highscore.txt", ios::in);
@@ -217,6 +219,7 @@ void setupHighScore() {
     f.close();
 }
 
+// Kiểm tra xem có lọt top không
 void checkHighScore(char _name[50], int _score) {
     for (int i = 0; i < 5; i++) {
         if (_score >= highscore[i].score) {
@@ -231,6 +234,7 @@ void checkHighScore(char _name[50], int _score) {
     }
 }
 
+// Hiển thị top người chơi điểm cao
 void showHighScore() {
     system("cls");
     gotoxy(105, 28);
@@ -239,23 +243,43 @@ void showHighScore() {
     f.open("highscore.txt", ios::in);
     string data;
     int i = 0;
-    int y = 9;
+    int y = 10;
+
     while (!f.eof()) {
-        getline(f, data);
+        f >> data;
         i++;
-        y++;
+        if (i == 13)
+            break;
         if (i == 1) {
-            gotoxy(55, y);
+            gotoxy(60, y);
             SetColor(6);
-            cout << data << endl;
+            cout << data;
+            continue;
         }
-        else {
+        if (i == 2) {
+            gotoxy(65, y);
+            SetColor(6);
+            cout << data;
+            y++;
+            continue;
+        }
+        if (i % 2 == 1) {
             gotoxy(50, y);
             SetColor(9);
-            cout << data << endl;
+            cout << data;
+            continue;
+        }
+        if (i % 2 == 0) {
+            gotoxy(75, y);
+            SetColor(9);
+            cout << data;
+            y++;
+            continue;
         }
     }
+
     f.close();
+
     char t = _getch();
     while (t != 27)
         t = _getch();
@@ -474,27 +498,93 @@ void StartGame() {
         {
             system("cls");
             //gotoxy(FRAME_WIDTH / 2, FRAME_HEIGHT / 2);
+            gotoxy(50, 12);
             cout << "Your score: " << Diem << "\n";
-            Sleep(2000);
             char _name[50];
+            gotoxy(35, 13);
             cout << "Ten cua ban(khong nhap dau cach): ";
             cin >> _name;
             checkHighScore(_name, Diem);
             Sleep(500);
             system("cls");
-            cout << "Ban co muon choi lai? [y/n]: ";
+            SetColor(6);
+            gotoxy(47, 12);
+            cout << "Ban co muon choi lai?";
             char Ops;
+            int process = 1;
+            gotoxy(47, 13);
+            SetColor(4);
+            cout << ">> Co <<";
+            gotoxy(50, 14);
+            SetColor(15);
+            cout << "Khong";
+
             Ops = _getch();
-            while (Ops != 'y' && Ops != 'n')
+            while (Ops != 13) {
+                if (Ops == 'w') {
+                    if (process == 1) {
+                        process = 2;
+                        gotoxy(47, 13);
+                        cout << "        ";
+                        gotoxy(50, 13);
+                        SetColor(15);
+                        cout << "Co";
+                        gotoxy(47, 14);
+                        SetColor(4);
+                        cout << ">> Khong <<";
+                    }
+                    else {
+                        gotoxy(47, 14);
+                        cout << "           ";
+                        gotoxy(47, 13);
+                        SetColor(4);
+                        cout << ">> Co <<";
+                        gotoxy(50, 14);
+                        SetColor(15);
+                        cout << "Khong";
+                        process = 1;
+                    }
+                }
+                else {
+                    if (Ops == 's') {
+                        if (process == 1) {
+                            process = 2;
+                            gotoxy(47, 13);
+                            cout << "        ";
+                            gotoxy(50, 13);
+                            SetColor(15);
+                            cout << "Co";
+                            gotoxy(47, 14);
+                            SetColor(4);
+                            cout << ">> Khong <<";
+                        }
+                        else {
+                            process = 1;
+                            gotoxy(47, 14);
+                            cout << "           ";
+                            gotoxy(47, 13);
+                            SetColor(4);
+                            cout << ">> Co <<";
+                            gotoxy(50, 14);
+                            SetColor(15);
+                            cout << "Khong";
+                        }
+                    }
+                }
                 Ops = _getch();
-            if (Ops == 'y') {
-                //PlaySound(TEXT("SNAKE_start.wav"), NULL, SND_ASYNC);
-                StartGame();
             }
-            else {
-                loadHighScore();
-                ChooseOptions();
+
+            if (Ops == 13) {
+                if (process == 1) {
+                    //PlaySound(TEXT("SNAKE_start.wav"), NULL, SND_ASYNC);
+                    StartGame();
+                }
+                else {
+                    loadHighScore();
+                    ChooseOptions();
+                }
             }
+
             break;
         }
         r.DiChuyen(Huong);
