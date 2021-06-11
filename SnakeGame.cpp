@@ -30,6 +30,7 @@ int whereY();
 
 int Diem = 0;
 int MoiAn = 0;
+int moilon = 0;
 class HighScore {
 public:
     int score;
@@ -47,6 +48,8 @@ public:
     struct Point A[100];
     int DoDai;
     Point FOOD;
+    Point BFOOD;
+    int timef = 95;
     CONRAN() {
         DoDai = 3;
         A[0].x = 12; A[0].y = 10;
@@ -55,7 +58,10 @@ public:
         srand(time(NULL));
         FOOD.x = rand() % ((FRAME_WIDTH - 2) - 2 + 1) + 2;
         FOOD.y = rand() % ((FRAME_HEIGHT - 2) - 3 + 1) + 3;
+        BFOOD.x = rand() % ((FRAME_WIDTH - 2) - 2 + 1) + 2;
+        BFOOD.y = rand() % ((FRAME_HEIGHT - 2) - 3 + 1) + 3;
     }
+
     void Ve() {
         ShowCur(false); // Ẩn con trỏ
         SetColor(12);
@@ -90,6 +96,7 @@ public:
         gotoxy(72, 7);
         cout << " esc = quit ";
         gotoxy(70, 12);
+        SetColor(4);
         cout << "Score: " << Diem;
 
         // Vẽ con rắn
@@ -102,41 +109,98 @@ public:
                 cout << "o";
         }
     }
-    int anmoi(int _HardLevel)
+    void timer()
     {
-        if (A[0].x == FOOD.x && A[0].y == FOOD.y)
+        gotoxy(65, 13);
+        cout << "Big food:";
+        for (int i = timef; i >= 75; i--)
+        {
+            gotoxy(i, 13);
+            cout << "*";
+        }
+    }
+    void xoatimer()
+    {
+        gotoxy(65, 13);
+        cout << "                                 ";
+    }
+    int anmoi(int _Hardlevel)
+    {
+        int _addscore = 0;
+        if ((A[0].x == FOOD.x && A[0].y == FOOD.y) || (A[0].x == BFOOD.x && A[0].y == BFOOD.y))
         {
             DoDai++;
             A[DoDai - 1] = A[DoDai - 2];
             PlaySound(TEXT("SNAKE_eatFood.wav"), NULL, SND_ASYNC);
-            srand(time(NULL));
-            FOOD.x = rand() % ((FRAME_WIDTH - 2) - 2 + 1) + 2;
-            FOOD.y = rand() % ((FRAME_HEIGHT - 2) - 3 + 1) + 3;
-            MoiAn += 1;
-            if (MoiAn % 5 != 0)
+            if (A[0].x == FOOD.x && A[0].y == FOOD.y)
             {
+                srand(time(NULL));
+                FOOD.x = rand() % ((FRAME_WIDTH - 2) - 2 + 1) + 2;
+                FOOD.y = rand() % ((FRAME_HEIGHT - 2) - 3 + 1) + 3;
+                if (MoiAn % 5 != 4)MoiAn += 1;
                 Diem += 10;
+                Diem = Diem + (_Hardlevel - 1) * 3;
+                return 1;
             }
-            else
-                Diem += 20;
-            Diem = Diem + (_HardLevel - 1) * 4;
-            return 1;
+            if (A[0].x == BFOOD.x && A[0].y == BFOOD.y)
+            {
+                if (moilon % 44 == 0 && moilon != 0) {
+                    Diem += 10;
+                }
+                else {
+                    Diem += 20; timef = 95; xoatimer();
+                    _addscore = 44 - moilon;
+                    moilon = 0;
+                }
+                srand(time(NULL));
+                BFOOD.x = rand() % ((FRAME_WIDTH - 2) - 2 + 1) + 2;
+                BFOOD.y = rand() % ((FRAME_HEIGHT - 2) - 3 + 1) + 3;
+                MoiAn += 1;
+                Diem = Diem + (_Hardlevel - 1) * 3 + _addscore * 2;
+                return 1;
+            }
+            
         }
         else
         {
-            if (MoiAn % 5 != 4)
+            gotoxy(FOOD.x, FOOD.y);
+            SetColor(13);
+            cout << "o";
+            if (MoiAn % 5 == 4)
             {
-                gotoxy(FOOD.x, FOOD.y);
-                SetColor(13);
-                cout << "o";
-                return 0;
-            }
-            else
-            {
-                gotoxy(FOOD.x, FOOD.y);
-                SetColor(13);
-                cout << "0";
-                return 0;
+                moilon++;
+                timer();
+                if (moilon % 44 == 0 && moilon != 0)
+                {
+                    gotoxy(BFOOD.x, BFOOD.y);
+                    SetColor(13);
+                    cout << " ";
+                    BFOOD.x = rand() % ((FRAME_WIDTH - 2) - 2 + 1) + 2;
+                    BFOOD.y = rand() % ((FRAME_HEIGHT - 2) - 3 + 1) + 3;
+                    MoiAn++;
+                    timef = 95;
+                    xoatimer();
+                    return 0;
+                }
+                else
+                {
+
+                    if (moilon % 2 == 0 && moilon != 0)
+                    {
+                        xoatimer();
+                        timef--;
+                        timer();
+                    }
+
+                    gotoxy(BFOOD.x, BFOOD.y);
+                    int Color;
+                    srand(time(NULL));
+                    Color = rand() % 15 + 1;
+                    SetColor(Color);
+                    cout << "@";
+                    return 0;
+                }
+
             }
         }
     }
@@ -144,6 +208,7 @@ public:
         if ((A[0].x == 0) || (A[0].y == 0) || (A[0].x == FRAME_WIDTH - 1) || (A[0].y == FRAME_HEIGHT - 1)) {
             PlaySound(TEXT("SNAKE_endGame.wav"), NULL, SND_ASYNC);
             Sleep(1000);
+            moilon = 0;
             return 1;
         }
         else
@@ -153,6 +218,7 @@ public:
                 if (A[0].x == A[i].x && A[0].y == A[i].y) {
                     PlaySound(TEXT("SNAKE_endGame.wav"), NULL, SND_ASYNC);
                     Sleep(1000);
+                    moilon = 0;
                     return 1;
                 }
             }
@@ -427,11 +493,17 @@ void ChooseOptions() {
 
 // Bắt đầu Game
 void StartGame() {
-    system("cls");
-    cout << "Choose your level (1 - 3): ";
-    int _HardLevel;
-    cin >> _HardLevel;
-    int speed = 160 - _HardLevel * 40; // Calculate speed depend on level
+    // Chon độ khó cho game
+    int _Hardlevel;
+    do
+    {
+        system("cls");
+        SetColor(13);
+        cout << "Choose your level (1 - 3): ";
+        cin >> _Hardlevel;
+    } while (_Hardlevel <= 0 || _Hardlevel >= 4);
+    int speed = 160 - _Hardlevel * 40; // Calculate speed depend on level
+
     system("cls");
     PlaySound(TEXT("SNAKE_start.wav"), NULL, SND_ASYNC);
     Diem = 0;
@@ -499,7 +571,7 @@ void StartGame() {
             }
         }
         r.Ve();
-        r.anmoi(_HardLevel);
+        r.anmoi(_Hardlevel);
         if (r.EndGame())
         {
             system("cls");
