@@ -139,7 +139,7 @@ public:
                 FOOD.y = rand() % ((FRAME_HEIGHT - 2) - 3 + 1) + 3;
                 if (MoiAn % 5 != 4)MoiAn += 1;
                 Diem += 10;
-                Diem = Diem + (_Hardlevel - 1) * 3;
+                //Diem = Diem + (_Hardlevel - 1) * 3;
                 return 1;
             }
             if (A[0].x == BFOOD.x && A[0].y == BFOOD.y)
@@ -149,14 +149,14 @@ public:
                 }
                 else {
                     Diem += 20; timef = 95; xoatimer();
-                    _addscore = 44 - moilon;
+                  //  _addscore = 44 - moilon;
                     moilon = 0;
                 }
                 srand(time(NULL));
                 BFOOD.x = rand() % ((FRAME_WIDTH - 2) - 2 + 1) + 2;
                 BFOOD.y = rand() % ((FRAME_HEIGHT - 2) - 3 + 1) + 3;
                 MoiAn += 1;
-                Diem = Diem + (_Hardlevel - 1) * 3 + _addscore * 2;
+               // Diem = Diem + (_Hardlevel - 1) * 3 + _addscore * 2;
                 return 1;
             }
             
