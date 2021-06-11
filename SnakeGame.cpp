@@ -119,7 +119,7 @@ public:
             }
             else
                 Diem += 20;
-            Diem = Diem + (_HardLevel - 1) * 3;
+            Diem = Diem + (_HardLevel - 1) * 4;
             return 1;
         }
         else
@@ -428,10 +428,10 @@ void ChooseOptions() {
 // Bắt đầu Game
 void StartGame() {
     system("cls");
-    cout << "Choose your level (1 - 5): ";
+    cout << "Choose your level (1 - 3): ";
     int _HardLevel;
     cin >> _HardLevel;
-    int speed = 600 - _HardLevel * 100; // Calculate speed depend on level
+    int speed = 160 - _HardLevel * 40; // Calculate speed depend on level
     system("cls");
     PlaySound(TEXT("SNAKE_start.wav"), NULL, SND_ASYNC);
     Diem = 0;
